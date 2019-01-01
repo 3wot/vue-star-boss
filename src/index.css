@@ -91,10 +91,9 @@ html,body {
 	top: 60px;
 	height: calc(100% - 60px);
 	width: 100%;
-	min-width: 800px;
 	overflow: auto;
 	/*text-align: left;*/
-	padding: 0px 20px 20px !important;
+	padding: 20px !important;
 }
 .pull-right {
 	float: right;

@@ -10,32 +10,44 @@
 		  	<el-main class="c-main">
 		  		<div class="main-in">
 		  			<el-button-group>
-					  	<el-button type="primary" :plain="type != 1" class="btn-100" @click="clickType(1)">今天</el-button>
-					  	<el-button type="primary" :plain="type != 2" class="btn-100" @click="clickType(2)">昨天</el-button>
-					  	<el-button type="primary" :plain="type != 3" class="btn-100" @click="clickType(3)">本月</el-button>
+					  	<el-button type="primary" :plain="type != 1" class="btn-75" @click="clickType(1)">今天</el-button>
+					  	<el-button type="primary" :plain="type != 2" class="btn-75" @click="clickType(2)">昨天</el-button>
+					  	<el-button type="primary" :plain="type != 3" class="btn-75" @click="clickType(3)">本月</el-button>
+					  	<el-button type="primary" :plain="type != 4" class="btn-75" @click="set">自定义</el-button>
 					</el-button-group>
 					<el-row>
-						<el-col :span="24" class="index-item">
+						<el-col :span="24" class="index-item" v-if="type == 4">
 							<el-date-picker
 								class="index-time"
 						      	v-model="value1"
-						      	type="datetime"
+						      	type="date"
 						      	placeholder="开始时间"
+						      	popper-class="index-pick"
 						      	@change="changeTime"
 						    >
 						    </el-date-picker>
 						</el-col>
-						<el-col :span="24" class="index-item">
+						<el-col :span="24" class="index-item"  v-if="type == 4">
 							<el-date-picker
 								class="index-time"
 						      	v-model="value2"
-						      	type="datetime"
+						      	type="date"
 						      	placeholder="结束时间"
+						      	popper-class="index-pick"
 						      	@change="changeTime"
 						    >
 						    </el-date-picker>
 						</el-col>
-						<el-col :span="24" class="index-item">
+						<!-- <el-col :span="24" class="index-item">
+							<el-date-picker
+							   	v-model="value6"
+							    type="daterange"
+							    range-separator="至"
+							    start-placeholder="开始日期"
+							    end-placeholder="结束日期">
+						    </el-date-picker>
+						</el-col> -->
+						<el-col :span="24" class="index-item"  v-if="type == 4">
 							<el-button type="primary" class="btn-300" @click.native="init">查询</el-button>
 						</el-col>
 						<el-col :span="24" class="index-item">
@@ -91,16 +103,16 @@ export default {
 	name: 'Index',
 	data () {
 		return {
-			type: 3,
+			type: 1,
 			value1: '',
 			value2: '',
-			VisitUserNumber: 1000,
+			VisitUserNumber: 0,
 			RegUserNumber: 0,
 			ApprovalUserNumber: 0,
 		}
 	},
 	mounted () {
-		this.clickType(3)
+		this.clickType(1)
 	},
 	methods:{
 
@@ -129,8 +141,6 @@ export default {
 				start = new Date(year, month, 1, 0, 0, 0)
 				end = time
 			}
-			console.log(start)
-			console.log(end)
 			this.value1 = start
 			this.value2 = end
 			this.init()
@@ -157,6 +167,12 @@ export default {
 				this.warn("请选择时间！")
 				return
 			}
+			const ss = value1.getTime()
+			const ee = value2.getTime()
+			if (ss>ee) {
+				this.warn("开始日期晚于结束日期！")
+				return
+			}
 			const StartDateTime = this.format(value1)
 			const EndDateTime = this.format(value2)
 			const param = {
@@ -177,6 +193,15 @@ export default {
 					this.warn(res.msg)
 				}
 			})
+		},
+
+		set() {
+			this.type = 4
+			this.value1 = ''
+			this.value2 = ''
+			this.VisitUserNumber = 0
+			this.RegUserNumber = 0
+			this.ApprovalUserNumber = 0
 		},
 
 	},
@@ -241,7 +266,7 @@ export default {
 	margin: 0 auto;
 }
 .index-item {
-	margin-top: 20px;
+	margin-top: 15px;
 }
 .index-time {
 	width: 100%;
